@@ -34,5 +34,5 @@ func main() {
     auth.RegisterRoutes(api, db)
     // food.RegisterRoutes(api, db)
 
-    app.Listen(":3000")
+    app.Listen(":8080")
 }

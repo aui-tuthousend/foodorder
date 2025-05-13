@@ -1,0 +1,58 @@
+basePath: /api
+definitions:
+  auth.AuthRequest:
+    description: Create user request body
+    properties:
+      email:
+        description: Your Fukin Email
+        type: string
+      name:
+        description: Your Fukin Name
+        type: string
+      password:
+        description: Your Fukin Password
+        type: string
+    type: object
+  auth.UserResponse:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: API untuk aplikasi pemesanan makanan online
+  title: Food Ordering API
+  version: "1.0"
+paths:
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: Create user request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.UserResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Register a new user
+      tags:
+      - auth
+swagger: "2.0"

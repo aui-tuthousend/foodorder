@@ -1,7 +1,7 @@
 package login
 
 import (
-	r "foodorder/infrastructure/repositories"
+	r "foodorder/infrastructure/repositories/auth"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -16,7 +16,7 @@ import (
 //	@Param			request	body		AuthRequest	true	"Create user request body"
 //	@Success		200		{object}	AuthResponse
 //	@Failure		400		{object}	map[string]string
-//	@Failure		401		{object}	map[string]string
+//	@Failure		500		{object}	map[string]string
 //	@Router			/api/auth/login [post]
 func Login(db *gorm.DB) fiber.Handler {
     return func(c *fiber.Ctx) error {
@@ -26,8 +26,12 @@ func Login(db *gorm.DB) fiber.Handler {
         }
 
         user, err := r.FindUserByEmail(db, req.Email)
-        if err != nil || !r.CheckPasswordHash(req.Password, user.Password) {
-            return c.Status(401).JSON(fiber.Map{"error": err.Error()})
+        if err != nil {
+            return c.Status(500).JSON(fiber.Map{"error": "Internal server error"})
+        }
+
+        if user == nil || !r.CheckPasswordHash(req.Password, user.Password) {
+            return c.Status(400).JSON(fiber.Map{"error": "Invalid credentials"})
         }
 
         token, _ := r.GenerateJWT(user.ID)

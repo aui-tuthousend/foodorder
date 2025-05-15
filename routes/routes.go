@@ -5,6 +5,7 @@ import (
     "gorm.io/gorm"
 
     auth "foodorder/features/auth/common"
+    user "foodorder/features/user/common"
     // "foodorder/internal/food"
     // "foodorder/internal/order"
     // "foodorder/middleware"
@@ -14,6 +15,6 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
     api := app.Group("/api")
 
     auth.RegisterRoutes(api, db)
-    // food.RegisterRoutes(api.Group("/foods"), db)
-    // order.RegisterRoutes(api.Group("/orders"), db, middleware.JWTProtected())
+    user.RegisterRoutes(api, db)
+    
 }

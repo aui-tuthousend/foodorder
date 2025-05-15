@@ -2,9 +2,9 @@ package main
 
 import (
 	"foodorder/database"
+	"foodorder/routes"
 	"foodorder/docs"
 	e "foodorder/entities"
-	"foodorder/features/auth/common"
 	"os"
 
 	_ "foodorder/docs" // for Swagger docs
@@ -30,19 +30,19 @@ func main() {
         docs.SwaggerInfo.Host = "foodorder-aui-tuthousend6429-eedv8bzg.leapcell.dev" // ganti dengan domain production kamu
     }
     
-    app := fiber.New()
+    app := fiber.New(fiber.Config{
+		EnablePrintRoutes: true,
+	})
     app.Use(logger.New())
 
     database.Connect()
 
     db := database.DB
     db.AutoMigrate(&e.User{})
+    // db.AutoMigrate(&e.User{}, &e.otherEntities{})
 
+    routes.SetupRoutes(app, db)
     app.Get("/swagger/*", swagger.HandlerDefault)
-
-    api := app.Group("/api")
-    common.RegisterRoutes(api, db)
-    // food.RegisterRoutes(api, db)
 
     app.Listen(":8080")
 }

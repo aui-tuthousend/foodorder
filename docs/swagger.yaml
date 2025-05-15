@@ -20,10 +20,17 @@ definitions:
       name:
         type: string
     type: object
+  create.CreateUserResponseWrapper:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/create.CreateUserResponse'
+      message:
+        type: string
+    type: object
   getprofile.GetUserResponse:
     properties:
-      Id:
-        type: integer
       email:
         type: string
       name:
@@ -77,15 +84,15 @@ paths:
             additionalProperties:
               type: string
             type: object
-        "401":
-          description: Unauthorized
+        "500":
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string
             type: object
       tags:
       - auth
-  /api/auth/profile:
+  /api/user/profile:
     get:
       description: Get Logged user profile
       produces:
@@ -104,8 +111,8 @@ paths:
       security:
       - BearerAuth: []
       tags:
-      - auth
-  /api/auth/register:
+      - user
+  /api/user/register:
     post:
       consumes:
       - application/json
@@ -123,7 +130,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/create.CreateUserResponse'
+            $ref: '#/definitions/create.CreateUserResponseWrapper'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "500":
           description: Internal Server Error
           schema:
@@ -131,7 +144,7 @@ paths:
               type: string
             type: object
       tags:
-      - auth
+      - user
 securityDefinitions:
   BearerAuth:
     in: header

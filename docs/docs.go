@@ -54,8 +54,8 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -66,7 +66,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/auth/profile": {
+        "/api/user/profile": {
             "get": {
                 "security": [
                     {
@@ -78,7 +78,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "user"
                 ],
                 "responses": {
                     "200": {
@@ -99,7 +99,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/auth/register": {
+        "/api/user/register": {
             "post": {
                 "description": "Register a new user",
                 "consumes": [
@@ -109,7 +109,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "user"
                 ],
                 "parameters": [
                     {
@@ -126,7 +126,16 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/create.CreateUserResponse"
+                            "$ref": "#/definitions/create.CreateUserResponseWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
@@ -172,12 +181,23 @@ const docTemplate = `{
                 }
             }
         },
+        "create.CreateUserResponseWrapper": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/create.CreateUserResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "getprofile.GetUserResponse": {
             "type": "object",
             "properties": {
-                "Id": {
-                    "type": "integer"
-                },
                 "email": {
                     "type": "string"
                 },

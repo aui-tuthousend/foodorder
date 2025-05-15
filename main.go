@@ -27,7 +27,7 @@ func main() {
     if os.Getenv("ENV") != "production" {
         docs.SwaggerInfo.Host = "127.0.0.1:8080"
     } else {
-        docs.SwaggerInfo.Host = "foodorder-aui-tuthousend6429-eedv8bzg.leapcell.dev/" // ganti dengan domain production kamu
+        docs.SwaggerInfo.Host = "foodorder-aui-tuthousend6429-eedv8bzg.leapcell.dev" // ganti dengan domain production kamu
     }
     
     app := fiber.New()

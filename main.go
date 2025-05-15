@@ -1,14 +1,17 @@
 package main
 
 import (
-    e "foodorder/entities"
-    "foodorder/database"
-    "foodorder/features/auth/common"
+	"foodorder/database"
+	"foodorder/docs"
+	e "foodorder/entities"
+	"foodorder/features/auth/common"
+	"os"
 
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/logger"
-    "github.com/gofiber/swagger"
-    _ "foodorder/docs" // for Swagger docs
+	_ "foodorder/docs" // for Swagger docs
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/swagger"
 )
 
 //	@title			Food Ordering API
@@ -21,6 +24,12 @@ import (
 // @in header
 // @name Authorization
 func main() {
+    if os.Getenv("ENV") != "production" {
+        docs.SwaggerInfo.Host = "127.0.0.1:8080"
+    } else {
+        docs.SwaggerInfo.Host = "foodorder-aui-tuthousend6429-eedv8bzg.leapcell.dev/" // ganti dengan domain production kamu
+    }
+    
     app := fiber.New()
     app.Use(logger.New())
 

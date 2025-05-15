@@ -15,7 +15,91 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/register": {
+        "/api/auth/login": {
+            "post": {
+                "description": "Log In",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "parameters": [
+                    {
+                        "description": "Create user request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/login.AuthRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/login.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get Logged user profile",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getprofile.GetUserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
             "post": {
                 "description": "Register a new user",
                 "consumes": [
@@ -27,7 +111,6 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Register a new user",
                 "parameters": [
                     {
                         "description": "Create user request body",
@@ -35,7 +118,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.AuthRequest"
+                            "$ref": "#/definitions/create.CreateUserRequest"
                         }
                     }
                 ],
@@ -43,13 +126,16 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.UserResponse"
+                            "$ref": "#/definitions/create.CreateUserResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -57,25 +143,25 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "auth.AuthRequest": {
+        "create.CreateUserRequest": {
             "description": "Create user request body",
             "type": "object",
             "properties": {
                 "email": {
-                    "description": "Your Fukin Email",
+                    "description": "Your Email",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Your Fukin Name",
+                    "description": "Your Name",
                     "type": "string"
                 },
                 "password": {
-                    "description": "Your Fukin Password",
+                    "description": "Your Password",
                     "type": "string"
                 }
             }
         },
-        "auth.UserResponse": {
+        "create.CreateUserResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -83,11 +169,52 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "getprofile.GetUserResponse": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
                 },
-                "password": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
+        },
+        "login.AuthRequest": {
+            "description": "Login user request body",
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Your Email",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Your Password",
+                    "type": "string"
+                }
+            }
+        },
+        "login.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
@@ -95,8 +222,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:3000",
-	BasePath:         "/api",
+	Host:             "127.0.0.1:8080",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Food Ordering API",
 	Description:      "API untuk aplikasi pemesanan makanan online",

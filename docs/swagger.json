@@ -6,10 +6,94 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:3000",
-    "basePath": "/api",
+    "host": "127.0.0.1:8080",
+    "basePath": "/",
     "paths": {
-        "/auth/register": {
+        "/api/auth/login": {
+            "post": {
+                "description": "Log In",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "parameters": [
+                    {
+                        "description": "Create user request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/login.AuthRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/login.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get Logged user profile",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/getprofile.GetUserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
             "post": {
                 "description": "Register a new user",
                 "consumes": [
@@ -21,7 +105,6 @@
                 "tags": [
                     "auth"
                 ],
-                "summary": "Register a new user",
                 "parameters": [
                     {
                         "description": "Create user request body",
@@ -29,7 +112,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.AuthRequest"
+                            "$ref": "#/definitions/create.CreateUserRequest"
                         }
                     }
                 ],
@@ -37,13 +120,16 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.UserResponse"
+                            "$ref": "#/definitions/create.CreateUserResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -51,25 +137,25 @@
         }
     },
     "definitions": {
-        "auth.AuthRequest": {
+        "create.CreateUserRequest": {
             "description": "Create user request body",
             "type": "object",
             "properties": {
                 "email": {
-                    "description": "Your Fukin Email",
+                    "description": "Your Email",
                     "type": "string"
                 },
                 "name": {
-                    "description": "Your Fukin Name",
+                    "description": "Your Name",
                     "type": "string"
                 },
                 "password": {
-                    "description": "Your Fukin Password",
+                    "description": "Your Password",
                     "type": "string"
                 }
             }
         },
-        "auth.UserResponse": {
+        "create.CreateUserResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -77,11 +163,52 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "getprofile.GetUserResponse": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
                 },
-                "password": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
+        },
+        "login.AuthRequest": {
+            "description": "Login user request body",
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Your Email",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Your Password",
+                    "type": "string"
+                }
+            }
+        },
+        "login.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

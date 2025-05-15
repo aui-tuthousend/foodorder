@@ -1,35 +1,111 @@
-basePath: /api
+basePath: /
 definitions:
-  auth.AuthRequest:
+  create.CreateUserRequest:
     description: Create user request body
     properties:
       email:
-        description: Your Fukin Email
+        description: Your Email
         type: string
       name:
-        description: Your Fukin Name
+        description: Your Name
         type: string
       password:
-        description: Your Fukin Password
+        description: Your Password
         type: string
     type: object
-  auth.UserResponse:
+  create.CreateUserResponse:
     properties:
       email:
         type: string
       name:
         type: string
-      password:
+    type: object
+  getprofile.GetUserResponse:
+    properties:
+      Id:
+        type: integer
+      email:
+        type: string
+      name:
         type: string
     type: object
-host: localhost:3000
+  login.AuthRequest:
+    description: Login user request body
+    properties:
+      email:
+        description: Your Email
+        type: string
+      password:
+        description: Your Password
+        type: string
+    type: object
+  login.AuthResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    type: object
+host: 127.0.0.1:8080
 info:
   contact: {}
   description: API untuk aplikasi pemesanan makanan online
   title: Food Ordering API
   version: "1.0"
 paths:
-  /auth/register:
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Log In
+      parameters:
+      - description: Create user request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/login.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/login.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      tags:
+      - auth
+  /api/auth/profile:
+    get:
+      description: Get Logged user profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/getprofile.GetUserResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      tags:
+      - auth
+  /api/auth/register:
     post:
       consumes:
       - application/json
@@ -40,19 +116,25 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/auth.AuthRequest'
+          $ref: '#/definitions/create.CreateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.UserResponse'
+            $ref: '#/definitions/create.CreateUserResponse'
         "500":
           description: Internal Server Error
           schema:
-            type: string
-      summary: Register a new user
+            additionalProperties:
+              type: string
+            type: object
       tags:
       - auth
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -1,8 +1,9 @@
 package main
 
 import (
-    "foodorder/internal/database"
-    "foodorder/internal/auth"
+    e "foodorder/entities"
+    "foodorder/database"
+    "foodorder/features/auth/common"
 
     "github.com/gofiber/fiber/v2"
     "github.com/gofiber/fiber/v2/middleware/logger"
@@ -13,25 +14,25 @@ import (
 //	@title			Food Ordering API
 //	@version		1.0
 //	@description	API untuk aplikasi pemesanan makanan online
-//	@host			localhost:3000
-//	@BasePath		/api
+//	@host			127.0.0.1:8080
+//	@BasePath		/
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
     app := fiber.New()
     app.Use(logger.New())
 
-    // Connect DB
     database.Connect()
 
-    // Auto migrate model
     db := database.DB
-    db.AutoMigrate(&auth.User{})
+    db.AutoMigrate(&e.User{})
 
-    // Swagger
     app.Get("/swagger/*", swagger.HandlerDefault)
 
-    // Register routes
     api := app.Group("/api")
-    auth.RegisterRoutes(api, db)
+    common.RegisterRoutes(api, db)
     // food.RegisterRoutes(api, db)
 
     app.Listen(":8080")

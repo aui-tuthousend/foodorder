@@ -4,7 +4,7 @@ import (
     "github.com/gofiber/fiber/v2"
     "gorm.io/gorm"
 
-    "foodorder/internal/auth"
+    auth "foodorder/features/auth/common"
     // "foodorder/internal/food"
     // "foodorder/internal/order"
     // "foodorder/middleware"
